@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/InteractInterface.h"
 #include "InteractableActor.generated.h"
@@ -14,6 +15,7 @@ class PBG_API AInteractableActor : public AActor, public IInteractInterface
 	
 public:	
 	void Interact_Implementation() override;
+	FText GetItemName_Implementation() override { return ActorName; }
 	
 	// Sets default values for this actor's properties
 	AInteractableActor();
@@ -26,14 +28,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	UStaticMeshComponent* Mesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
+	UBoxComponent* Collision;
+	
 	// Name for interact widget
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Name")
 	FText ActorName;
 	
 public:	
-	
-	UFUNCTION(BlueprintCallable)
-	FText GetActorName() const { return ActorName; }
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

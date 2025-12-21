@@ -3,6 +3,7 @@
 #include "Public/Characters/BaseCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "HUDs/BaseHUD.h"
 #include "Interfaces/InteractInterface.h"
 
 // Sets default values
@@ -28,6 +29,8 @@ void ABaseCharacter::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	
 	GetWorldTimerManager().SetTimer(SprintTimer, this, &ABaseCharacter::SprintFixedTick, SprintFixedTickTime, true);
+	
+	GetWorldTimerManager().SetTimer(InteractableItemNameTimer, this, &ABaseCharacter::LineTraceInteractItemName, ShownInteractItemNameTime, true);
 }
 
 void ABaseCharacter::Move(const FInputActionValue& Value)
@@ -117,16 +120,55 @@ void ABaseCharacter::Interact()
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
 	
-	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_Visibility, CollisionParams);
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
 	
 	DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false ,2);
 	
 	if (Hit.bBlockingHit)
 	{	
-		AActor* HitActor = Hit.GetActor();
-		if (HitActor && HitActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+		InteractableActor = Hit.GetActor();
+		if (InteractableActor && InteractableActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		{
-			IInteractInterface::Execute_Interact(HitActor);
+			IInteractInterface::Execute_Interact(InteractableActor);
+		}
+	}
+}
+
+void ABaseCharacter::LineTraceInteractItemName()
+{
+	FVector Start = Camera->GetComponentLocation();
+	FVector End = Start + Camera->GetForwardVector() * 1000.0f;
+    
+	FHitResult Hit;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+    
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
+    
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.f, 0);
+    
+	ABaseHUD* HUD = Cast<ABaseHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	
+	InteractableActor = nullptr;
+	if (HUD)
+	{
+		HUD->HideInteractBlock();
+	}
+    
+	if (bHit && Hit.GetActor())
+	{
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+		{
+			InteractableActor = HitActor;
+			FText ActorName = IInteractInterface::Execute_GetItemName(HitActor);
+            
+			if (HUD)
+			{
+				HUD->SetInteractText(ActorName);
+				HUD->ShowInteractBlock();
+			}
+			return;
 		}
 	}
 }

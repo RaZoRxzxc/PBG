@@ -13,6 +13,12 @@ class PBG_API ABaseHUD : public AHUD
 {
 	GENERATED_BODY()
 	
+public:
+	
+	void SetInteractText(FText text);
+	
+	void ShowInteractBlock();
+	void HideInteractBlock();
 protected:
 	
 	virtual void BeginPlay() override;

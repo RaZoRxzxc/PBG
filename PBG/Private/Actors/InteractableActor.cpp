@@ -10,6 +10,9 @@ AInteractableActor::AInteractableActor()
 	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetupAttachment(RootComponent);
+	
+	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
+	Collision->SetupAttachment(Mesh);
 }
 
 void AInteractableActor::Interact_Implementation()

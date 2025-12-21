@@ -62,8 +62,14 @@ private:
 	void SprintFixedTick();
 	
 	void Interact();
+	void LineTraceInteractItemName();
 	
+	AActor* InteractableActor;
+	FTimerHandle InteractableItemNameTimer;
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact")
+	float ShownInteractItemNameTime = 0.1f;
+	
 	
 	/** Time interval for sprinting stamina ticks */
 	UPROPERTY(EditAnywhere, Category="Sprint", meta = (ClampMin = 0, ClampMax = 1, Units = "s"))
