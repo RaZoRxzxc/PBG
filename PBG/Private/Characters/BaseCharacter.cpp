@@ -12,11 +12,12 @@ ABaseCharacter::ABaseCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
-	SpringArmComponent->SetupAttachment(RootComponent);
-	
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
-	Camera->SetupAttachment(SpringArmComponent);
+	Camera->SetupAttachment(GetMesh(), TEXT("head"));
+	Camera->bUsePawnControlRotation = true;
+	
+	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchSpeed; 
+	
 }
 
 // Called when the game starts or when spawned
@@ -28,7 +29,7 @@ void ABaseCharacter::BeginPlay()
 	
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	
-	GetWorldTimerManager().SetTimer(SprintTimer, this, &ABaseCharacter::SprintFixedTick, SprintFixedTickTime, true);
+	GetWorldTimerManager().SetTimer(SprintTimer, this, &ABaseCharacter::FixedTick, SprintFixedTickTime, true);
 	
 	GetWorldTimerManager().SetTimer(InteractableItemNameTimer, this, &ABaseCharacter::LineTraceInteractItemName, ShownInteractItemNameTime, true);
 }
@@ -78,8 +79,41 @@ void ABaseCharacter::StopSprint()
 	}
 }
 
-void ABaseCharacter::SprintFixedTick()
+void ABaseCharacter::ToggleCrouch()
 {
+	if (!GetCharacterMovement()->IsFalling())
+	{
+		if (!bIsCrouch)
+		{
+			bIsCrouch = true;
+			Crouch();
+		}
+		else
+		{
+			bIsCrouch = false;
+			UnCrouch();
+		}
+	}
+}
+
+void ABaseCharacter::FixedTick()
+{
+	FVector Velocity = GetCharacterMovement()->Velocity;
+	float Speed = FVector(Velocity.X, Velocity.Y, 0.0f).Size();
+	
+	if (Speed <= 1.0f)
+	{
+		MovementState = EMovementState::E_Idle;
+	}
+	else if (Speed <= 401.0f)
+	{
+		MovementState = EMovementState::E_Walk;
+	}
+	else if (Speed <= 801.0f)
+	{
+		MovementState = EMovementState::E_Sprint;
+	}
+	
 	if (bIsSprinting && !bIsRecovering && GetVelocity().Length() > WalkSpeed)
 	{
 		if (SprintMeter > 0.0f)
@@ -112,9 +146,8 @@ void ABaseCharacter::SprintFixedTick()
 
 void ABaseCharacter::Interact()
 {
-	UE_LOG(LogTemp, Log, TEXT("Interact Character"));
 	FVector Start = Camera->GetComponentLocation();
-	FVector End = Start + Camera->GetForwardVector() * 1000.0f;
+	FVector End = Start + Camera->GetForwardVector() * InteractDistance;
 	
 	FHitResult Hit;
 	FCollisionQueryParams CollisionParams;
@@ -130,6 +163,7 @@ void ABaseCharacter::Interact()
 		if (InteractableActor && InteractableActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		{
 			IInteractInterface::Execute_Interact(InteractableActor);
+			UE_LOG(LogTemp, Log, TEXT("Interact Character"));
 		}
 	}
 }
@@ -137,7 +171,7 @@ void ABaseCharacter::Interact()
 void ABaseCharacter::LineTraceInteractItemName()
 {
 	FVector Start = Camera->GetComponentLocation();
-	FVector End = Start + Camera->GetForwardVector() * 1000.0f;
+	FVector End = Start + Camera->GetForwardVector() * InteractDistance;
     
 	FHitResult Hit;
 	FCollisionQueryParams CollisionParams;
@@ -184,7 +218,7 @@ void ABaseCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 }
 
 // Called to bind functionality to input
@@ -204,9 +238,8 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ABaseCharacter::StartSprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ABaseCharacter::StopSprint);
 		
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ABaseCharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ABaseCharacter::StopJumping);
+		// Crouching
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ABaseCharacter::ToggleCrouch);
 
 		// Interacting
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ABaseCharacter::Interact);

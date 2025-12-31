@@ -7,8 +7,23 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "BaseCharacter.generated.h"
+
+UENUM(BlueprintType)
+enum class EMovementState : uint8
+{
+	E_Idle UMETA(DisplayName = "Idle"),
+	E_Walk UMETA(DisplayName = "Walk"),
+	E_Sprint UMETA(DisplayName = "Sprint"),
+	E_Jump UMETA(DisplayName = "Jump")
+};
+
+UENUM(BlueprintType)
+enum class EStandState : uint8
+{
+	E_Stand UMETA(DisplayName = "Stand"),
+	E_Crouch UMETA(DisplayName = "Crouch")
+};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateSprintMeter, float, Percentage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSprintStateChanged, bool, bSprinting);
@@ -21,10 +36,13 @@ public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
 
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	EMovementState MovementState;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	EStandState StandState;
+	
 protected:
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
-	USpringArmComponent* SpringArmComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* Camera;
@@ -39,7 +57,7 @@ protected:
 	UInputAction* SprintAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* JumpAction;
+	UInputAction* CrouchAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* InteractAction;
@@ -58,8 +76,15 @@ private:
 	void StartSprint();
 	void StopSprint();
 	
+	void ToggleCrouch();
+protected:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	bool bIsCrouch = false;
+	
+private:
 	/** Called while sprinting at a fixed time interval */
-	void SprintFixedTick();
+	void FixedTick();
 	
 	void Interact();
 	void LineTraceInteractItemName();
@@ -70,6 +95,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact")
 	float ShownInteractItemNameTime = 0.1f;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact")
+	float InteractDistance = 500.0f;
 	
 	/** Time interval for sprinting stamina ticks */
 	UPROPERTY(EditAnywhere, Category="Sprint", meta = (ClampMin = 0, ClampMax = 1, Units = "s"))
@@ -80,7 +107,7 @@ protected:
 
 	/** How long we can sprint for, in seconds */
 	UPROPERTY(EditAnywhere, Category="Sprint", meta = (ClampMin = 0, ClampMax = 10, Units = "s"))
-	float SprintTime = 3.0f;
+	float SprintTime = 10.0f;
 	
 	/** Walk speed while recovering stamina */
 	UPROPERTY(EditAnywhere, Category="Recovery", meta = (ClampMin = 0, ClampMax = 10, Units = "cm/s"))
@@ -99,6 +126,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float SprintSpeed = 800.0f;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float CrouchSpeed = 200.0f;
 public:
 	
 	/** Delegate called when the sprint meter should be updated */
