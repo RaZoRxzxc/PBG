@@ -15,9 +15,9 @@ AInteractableActor::AInteractableActor()
 	Collision->SetupAttachment(Mesh);
 }
 
-void AInteractableActor::Interact_Implementation()
+void AInteractableActor::Interact_Implementation(ACharacter* Character)
 {
-	IInteractInterface::Interact_Implementation();
+	IInteractInterface::Interact_Implementation(Character);
 	
 }
 

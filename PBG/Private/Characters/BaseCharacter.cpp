@@ -162,7 +162,7 @@ void ABaseCharacter::Interact()
 		InteractableActor = Hit.GetActor();
 		if (InteractableActor && InteractableActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		{
-			IInteractInterface::Execute_Interact(InteractableActor);
+			IInteractInterface::Execute_Interact(InteractableActor, this);
 			UE_LOG(LogTemp, Log, TEXT("Interact Character"));
 		}
 	}

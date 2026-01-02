@@ -24,7 +24,7 @@ class PBG_API IInteractInterface
 public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Interact();
+	void Interact(ACharacter* Character);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FText GetItemName();
