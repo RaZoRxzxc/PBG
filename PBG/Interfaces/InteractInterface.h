@@ -28,4 +28,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FText GetItemName();
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UseItem();
 };

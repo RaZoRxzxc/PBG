@@ -17,8 +17,37 @@ void AHeadFlashlight::Interact_Implementation(ACharacter* Character)
 	Super::Interact_Implementation(Character);
 	if (Character)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Interact flashlight"));
 		AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("FlashLight_Socket"));
 		Collision->SetCollisionProfileName(TEXT("NoCollision"));
+		bIsEquip = true;
 	}
+}
+
+void AHeadFlashlight::UseItem_Implementation()
+{
+	Super::UseItem_Implementation();
+	
+	if (bIsEquip)
+	{
+		if (!bLightOn)
+		{
+			LightOn();
+		}
+		else
+		{
+			LightOff();
+		}
+	}
+}
+
+void AHeadFlashlight::LightOn()
+{
+	Light->SetIntensity(5000);
+	bLightOn = true;
+}
+
+void AHeadFlashlight::LightOff()
+{
+	Light->SetIntensity(0);
+	bLightOn = false;
 }

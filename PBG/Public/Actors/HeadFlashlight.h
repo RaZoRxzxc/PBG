@@ -6,9 +6,7 @@
 #include "Actors/InteractableActor.h"
 #include "HeadFlashlight.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class PBG_API AHeadFlashlight : public AInteractableActor
 {
@@ -18,9 +16,16 @@ class PBG_API AHeadFlashlight : public AInteractableActor
 public:
 	
 	void Interact_Implementation(ACharacter* Character) override;
+	void UseItem_Implementation() override;
 	
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Light")
 	class USpotLightComponent* Light;
+
+private:
+	bool bLightOn = true;
+	
+	void LightOn();
+	void LightOff();
 };

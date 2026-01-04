@@ -32,6 +32,14 @@ void ABaseHUD::HideInteractBlock()
 	}
 }
 
+void ABaseHUD::SetMicVolumeValue(float Value)
+{
+	if (PlayerWidget)
+	{
+		PlayerWidget->SetMicBarValue(Value);
+	}
+}
+
 void ABaseHUD::BeginPlay()
 {
 	Super::BeginPlay();

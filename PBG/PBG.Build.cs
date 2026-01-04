@@ -18,7 +18,8 @@ public class PBG : ModuleRules
 			"StateTreeModule",
 			"GameplayStateTreeModule",
 			"UMG",
-			"Slate"
+			"Slate", 
+			"AudioCapture"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });

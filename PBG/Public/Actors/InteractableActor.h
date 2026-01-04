@@ -16,6 +16,7 @@ class PBG_API AInteractableActor : public AActor, public IInteractInterface
 public:	
 	void Interact_Implementation(ACharacter* Character) override;
 	FText GetItemName_Implementation() override { return ActorName; }
+	void UseItem_Implementation() override;
 	
 	// Sets default values for this actor's properties
 	AInteractableActor();
@@ -35,9 +36,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Name")
 	FText ActorName;
 	
+	bool bIsEquip = false;
 public:	
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
 };

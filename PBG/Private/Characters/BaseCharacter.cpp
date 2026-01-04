@@ -4,6 +4,8 @@
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "HUDs/BaseHUD.h"
+#include "Components/CapsuleComponent.h"
+#include "AudioCaptureComponent.h"
 #include "Interfaces/InteractInterface.h"
 
 // Sets default values
@@ -13,11 +15,14 @@ ABaseCharacter::ABaseCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
-	Camera->SetupAttachment(GetMesh(), TEXT("head"));
+	Camera->SetupAttachment(GetMesh(), FName("head"));
 	Camera->bUsePawnControlRotation = true;
 	
-	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchSpeed; 
-	
+	AudioCaptureComponent = CreateDefaultSubobject<UAudioCaptureComponent>("AudioCaptureComponent");
+	AudioCaptureComponent->SetupAttachment(GetCapsuleComponent());
+	AudioCaptureComponent->bEnableBusSends = false;
+	AudioCaptureComponent->bEnableBaseSubmix = false;
+	AudioCaptureComponent->bEnableSubmixSends = false;
 }
 
 // Called when the game starts or when spawned
@@ -25,13 +30,35 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	PlayerHUD = Cast<ABaseHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	
 	SprintMeter = SprintTime;
 	
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchSpeed; 
 	
+	// Fixed tick
 	GetWorldTimerManager().SetTimer(SprintTimer, this, &ABaseCharacter::FixedTick, SprintFixedTickTime, true);
 	
+	// Interact trace
 	GetWorldTimerManager().SetTimer(InteractableItemNameTimer, this, &ABaseCharacter::LineTraceInteractItemName, ShownInteractItemNameTime, true);
+	
+	AudioCaptureComponent->OnAudioEnvelopeValue.AddDynamic(this, &ABaseCharacter::AudioEnvelopeValue);
+}
+
+void ABaseCharacter::AudioEnvelopeValue(float EnvelopeValue)
+{
+	MicVolume = EnvelopeValue * 100.0f;
+	
+	if (PlayerHUD)
+	{
+		PlayerHUD->SetMicVolumeValue(MicVolume);
+	}
+	
+	if (MicVolume > 1.0f)
+	{
+		isDead();
+	}
 }
 
 void ABaseCharacter::Move(const FInputActionValue& Value)
@@ -96,6 +123,24 @@ void ABaseCharacter::ToggleCrouch()
 	}
 }
 
+void ABaseCharacter::UseItem()
+{
+	if (InteractableActor && InteractableActor->Implements<UInteractInterface>())
+	{
+		IInteractInterface::Execute_UseItem(InteractableActor);
+	}
+}
+
+void ABaseCharacter::isDead()
+{
+	if (!bIsDead)
+	{
+		bIsDead = true;
+		UE_LOG(LogTemp, Warning, TEXT("Player is dead"));
+		GetCharacterMovement()->DisableMovement();
+	}
+}
+
 void ABaseCharacter::FixedTick()
 {
 	FVector Velocity = GetCharacterMovement()->Velocity;
@@ -155,15 +200,12 @@ void ABaseCharacter::Interact()
 	
 	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
 	
-	DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false ,2);
-	
 	if (Hit.bBlockingHit)
 	{	
 		InteractableActor = Hit.GetActor();
 		if (InteractableActor && InteractableActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		{
 			IInteractInterface::Execute_Interact(InteractableActor, this);
-			UE_LOG(LogTemp, Log, TEXT("Interact Character"));
 		}
 	}
 }
@@ -178,15 +220,11 @@ void ABaseCharacter::LineTraceInteractItemName()
 	CollisionParams.AddIgnoredActor(this);
     
 	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
-    
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.f, 0);
-    
-	ABaseHUD* HUD = Cast<ABaseHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	
-	InteractableActor = nullptr;
-	if (HUD)
+	HoveredInteractActor = nullptr;
+	if (PlayerHUD)
 	{
-		HUD->HideInteractBlock();
+		PlayerHUD->HideInteractBlock();
 	}
     
 	if (bHit && Hit.GetActor())
@@ -194,13 +232,13 @@ void ABaseCharacter::LineTraceInteractItemName()
 		AActor* HitActor = Hit.GetActor();
 		if (HitActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		{
-			InteractableActor = HitActor;
-			FText ActorName = IInteractInterface::Execute_GetItemName(HitActor);
+			HoveredInteractActor = HitActor;
+			FText ActorName = IInteractInterface::Execute_GetItemName(HoveredInteractActor);
             
-			if (HUD)
+			if (PlayerHUD)
 			{
-				HUD->SetInteractText(ActorName);
-				HUD->ShowInteractBlock();
+				PlayerHUD->SetInteractText(ActorName);
+				PlayerHUD->ShowInteractBlock();
 			}
 			return;
 		}
@@ -214,7 +252,6 @@ void ABaseCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	GetWorldTimerManager().ClearTimer(SprintTimer);
 }
 
-// Called every frame
 void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -243,6 +280,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Interacting
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ABaseCharacter::Interact);
+		EnhancedInputComponent->BindAction(UseItemAction, ETriggerEvent::Started, this, &ABaseCharacter::UseItem);
 	}
 
 }

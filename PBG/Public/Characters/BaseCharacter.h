@@ -9,13 +9,14 @@
 #include "Camera/CameraComponent.h"
 #include "BaseCharacter.generated.h"
 
+class UAudioCaptureComponent;
+
 UENUM(BlueprintType)
 enum class EMovementState : uint8
 {
 	E_Idle UMETA(DisplayName = "Idle"),
 	E_Walk UMETA(DisplayName = "Walk"),
 	E_Sprint UMETA(DisplayName = "Sprint"),
-	E_Jump UMETA(DisplayName = "Jump")
 };
 
 UENUM(BlueprintType)
@@ -43,6 +44,14 @@ public:
 	EStandState StandState;
 	
 protected:
+	UPROPERTY()
+	class ABaseHUD* PlayerHUD;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Audio")
+	UAudioCaptureComponent* AudioCaptureComponent;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	float MicVolume;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* Camera;
@@ -62,9 +71,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* InteractAction;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* UseItemAction;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
+	UFUNCTION()
+	void AudioEnvelopeValue(float EnvelopeValue);
+
 private:
 	
 	void Move(const FInputActionValue& Value);
@@ -77,6 +92,11 @@ private:
 	void StopSprint();
 	
 	void ToggleCrouch();
+	
+	void UseItem();
+	
+	void isDead();
+	bool bIsDead = false;
 protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
@@ -90,6 +110,8 @@ private:
 	void LineTraceInteractItemName();
 	
 	AActor* InteractableActor;
+	AActor* HoveredInteractActor;
+	
 	FTimerHandle InteractableItemNameTimer;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact")
@@ -140,9 +162,8 @@ protected:
 	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

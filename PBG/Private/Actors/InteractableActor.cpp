@@ -3,6 +3,13 @@
 
 #include "Actors/InteractableActor.h"
 
+void AInteractableActor::UseItem_Implementation()
+{
+	IInteractInterface::UseItem_Implementation();
+	
+	
+}
+
 // Sets default values
 AInteractableActor::AInteractableActor()
 {

@@ -19,6 +19,8 @@ public:
 	
 	void ShowInteractBlock();
 	void HideInteractBlock();
+	
+	void SetMicVolumeValue(float Value);
 protected:
 	
 	virtual void BeginPlay() override;

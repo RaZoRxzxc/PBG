@@ -33,7 +33,13 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (BindWidget))
 	USizeBox* InteractBox;
+	
+	UFUNCTION()
+	void SetMicBarValue(float Value);
 protected:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (BindWidget))
+	UProgressBar* MicVolumeBar;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (BindWidget))
 	UProgressBar* StaminaBar;
