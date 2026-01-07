@@ -23,6 +23,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Light")
 	class USpotLightComponent* Light;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	USoundBase* Sound;
 private:
 	bool bLightOn = true;
 	

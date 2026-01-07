@@ -5,6 +5,8 @@
 
 #include "Components/SpotLightComponent.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AHeadFlashlight::AHeadFlashlight()
 {
@@ -42,12 +44,18 @@ void AHeadFlashlight::UseItem_Implementation()
 
 void AHeadFlashlight::LightOn()
 {
-	Light->SetIntensity(5000);
+	Light->SetIntensity(10000);
 	bLightOn = true;
+	
+	// Play on/off flashlight sound
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation());
 }
 
 void AHeadFlashlight::LightOff()
 {
 	Light->SetIntensity(0);
 	bLightOn = false;
+	
+	// Play on/off flashlight sound
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation());
 }

@@ -19,7 +19,8 @@ public class PBG : ModuleRules
 			"GameplayStateTreeModule",
 			"UMG",
 			"Slate", 
-			"AudioCapture"
+			"AudioCapture",
+			"PhysicsCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });

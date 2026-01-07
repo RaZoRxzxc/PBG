@@ -34,7 +34,7 @@ void UPlayerWidget::SetMicBarValue(float Value)
 {
 	if (MicVolumeBar)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Mic volume = %f"), Value)
+		//UE_LOG(LogTemp, Warning, TEXT("Mic volume = %f"), Value)
 		MicVolumeBar->SetPercent(Value);
 	}
 }
