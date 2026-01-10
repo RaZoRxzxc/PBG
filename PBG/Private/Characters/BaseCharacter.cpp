@@ -25,7 +25,7 @@ ABaseCharacter::ABaseCharacter()
 	AudioCaptureComponent->bEnableSubmixSends = false;
 }
 
-// Called when the game starts or when spawned
+// Called when the game starts or when	spawned
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -38,12 +38,14 @@ void ABaseCharacter::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchSpeed; 
 	
 	// Fixed tick
-	GetWorldTimerManager().SetTimer(SprintTimer, this, &ABaseCharacter::FixedTick, SprintFixedTickTime, true);
+	GetWorldTimerManager().SetTimer(SprintTimer, this, &ABaseCharacter::FixedTick, FixedTickTime, true);
 	
 	// Interact trace
 	GetWorldTimerManager().SetTimer(InteractableItemNameTimer, this, &ABaseCharacter::LineTraceInteractItemName, ShownInteractItemNameTime, true);
 	
 	AudioCaptureComponent->OnAudioEnvelopeValue.AddDynamic(this, &ABaseCharacter::AudioEnvelopeValue);
+	
+	OnDeathRegistered.AddDynamic(this, &ABaseCharacter::isDead);
 }
 
 void ABaseCharacter::AudioEnvelopeValue(float EnvelopeValue)
@@ -163,7 +165,7 @@ void ABaseCharacter::FixedTick()
 	{
 		if (SprintMeter > 0.0f)
 		{
-			SprintMeter = FMath::Max(SprintMeter - SprintFixedTickTime, 0.0f);
+			SprintMeter = FMath::Max(SprintMeter - FixedTickTime, 0.0f);
 			
 			if (SprintMeter <= 0.0f)
 			{
@@ -175,7 +177,7 @@ void ABaseCharacter::FixedTick()
 	}
 	else
 	{
-		SprintMeter = FMath::Min(SprintMeter + SprintFixedTickTime, SprintTime);
+		SprintMeter = FMath::Min(SprintMeter + FixedTickTime, SprintTime);
 		
 		if (SprintMeter >= SprintTime)
 		{

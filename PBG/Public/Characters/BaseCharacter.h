@@ -26,6 +26,7 @@ enum class EStandState : uint8
 	E_Crouch UMETA(DisplayName = "Crouch")
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathRegistered);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateSprintMeter, float, Percentage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSprintStateChanged, bool, bSprinting);
 UCLASS()
@@ -94,10 +95,10 @@ private:
 	void ToggleCrouch();
 	
 	void UseItem();
-	
+protected:
+	UFUNCTION()
 	void isDead();
 	bool bIsDead = false;
-protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	bool bIsCrouch = false;
@@ -122,7 +123,7 @@ protected:
 	
 	/** Time interval for sprinting stamina ticks */
 	UPROPERTY(EditAnywhere, Category="Sprint", meta = (ClampMin = 0, ClampMax = 1, Units = "s"))
-	float SprintFixedTickTime = 0.03333f;
+	float FixedTickTime = 0.03333f;
 
 	/** Sprint stamina amount. Maxes at SprintTime */
 	float SprintMeter = 0.0f;
@@ -157,6 +158,8 @@ public:
 
 	/** Delegate called when we start and stop sprinting */
 	FSprintStateChanged OnSprintStateChanged;
+	
+	FOnDeathRegistered OnDeathRegistered;
 	
 protected:
 	
