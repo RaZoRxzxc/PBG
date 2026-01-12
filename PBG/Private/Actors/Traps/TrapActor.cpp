@@ -14,8 +14,8 @@ ATrapActor::ATrapActor()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetupAttachment(RootComponent);
 	
-	BoxCollision = CreateDefaultSubobject<UBoxComponent>("BoxCollision");
-	BoxCollision->SetupAttachment(Mesh);
+	TrapBoxCollision = CreateDefaultSubobject<UBoxComponent>("BoxCollision");
+	TrapBoxCollision->SetupAttachment(Mesh);
 
 }
 
@@ -24,12 +24,12 @@ void ATrapActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	// Setup overlap begin function to collision
-	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ATrapActor::OnOverlapBegin);
+	// Setup overlap begin functions to collisions
+	TrapBoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ATrapActor::OnTrapOverlapBegin);
 }
 
-void ATrapActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ATrapActor::OnTrapOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                                    int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (ABaseCharacter* Character = Cast<ABaseCharacter>(OtherActor))
 	{

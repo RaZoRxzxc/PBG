@@ -28,14 +28,12 @@ public:
 	UFUNCTION()
 	void OnSprintStateChanged(bool bSprinting);
 	
-	UFUNCTION(BlueprintCallable)
-	UTextBlock* GetInteractText() { return InteractText; }
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (BindWidget))
-	USizeBox* InteractBox;
-	
 	UFUNCTION()
 	void SetMicBarValue(float Value);
+	
+	UFUNCTION()
+	void ShowInteractImage(bool bIsInteracting);
+
 protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (BindWidget))
@@ -45,7 +43,7 @@ protected:
 	UProgressBar* StaminaBar;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (BindWidget))
-	UTextBlock* InteractText;
+	class UImage* InteractImage;
 	
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* StaminaAnim;

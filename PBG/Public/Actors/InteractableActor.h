@@ -15,7 +15,6 @@ class PBG_API AInteractableActor : public AActor, public IInteractInterface
 	
 public:	
 	void Interact_Implementation(ACharacter* Character) override;
-	FText GetItemName_Implementation() override { return ActorName; }
 	void UseItem_Implementation() override;
 	
 	// Sets default values for this actor's properties
@@ -31,10 +30,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	UBoxComponent* Collision;
-	
-	// Name for interact widget
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Name")
-	FText ActorName;
 	
 	bool bIsEquip = false;
 public:	

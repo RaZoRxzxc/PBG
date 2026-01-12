@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "TrapActor.generated.h"
+class UBoxComponent;
 
 UCLASS()
 class PBG_API ATrapActor : public AActor
@@ -21,12 +22,12 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	UStaticMeshComponent* Mesh;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
-	class UBoxComponent* BoxCollision;
+	UBoxComponent* TrapBoxCollision;
 	
 	UFUNCTION()
-	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	virtual void OnTrapOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 public:	
 	// Called every frame

@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Public/Widgets/PlayerWidget.h"
+
+#include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Public/Characters/BaseCharacter.h"
 
@@ -36,5 +38,20 @@ void UPlayerWidget::SetMicBarValue(float Value)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Mic volume = %f"), Value)
 		MicVolumeBar->SetPercent(Value);
+	}
+}
+
+void UPlayerWidget::ShowInteractImage(bool bIsInteracting)
+{
+	if (InteractImage)
+	{
+		if (bIsInteracting)
+		{
+			InteractImage->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			InteractImage->SetVisibility(ESlateVisibility::Collapsed);
+		}
 	}
 }

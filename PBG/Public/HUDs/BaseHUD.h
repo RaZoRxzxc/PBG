@@ -15,11 +15,8 @@ class PBG_API ABaseHUD : public AHUD
 	
 public:
 	
-	void SetInteractText(FText text);
-	
-	void ShowInteractBlock();
-	void HideInteractBlock();
-	
+	void ShowInteractImage(bool bIsInteract);
+
 	void SetMicVolumeValue(float Value);
 protected:
 	

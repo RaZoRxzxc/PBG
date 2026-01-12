@@ -27,8 +27,5 @@ public:
 	void Interact(ACharacter* Character);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FText GetItemName();
-	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UseItem();
 };

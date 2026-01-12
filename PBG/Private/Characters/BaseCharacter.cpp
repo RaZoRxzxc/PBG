@@ -226,7 +226,7 @@ void ABaseCharacter::LineTraceInteractItemName()
 	HoveredInteractActor = nullptr;
 	if (PlayerHUD)
 	{
-		PlayerHUD->HideInteractBlock();
+		PlayerHUD->ShowInteractImage(false);
 	}
     
 	if (bHit && Hit.GetActor())
@@ -235,12 +235,10 @@ void ABaseCharacter::LineTraceInteractItemName()
 		if (HitActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		{
 			HoveredInteractActor = HitActor;
-			FText ActorName = IInteractInterface::Execute_GetItemName(HoveredInteractActor);
             
 			if (PlayerHUD)
 			{
-				PlayerHUD->SetInteractText(ActorName);
-				PlayerHUD->ShowInteractBlock();
+				PlayerHUD->ShowInteractImage(true);
 			}
 			return;
 		}

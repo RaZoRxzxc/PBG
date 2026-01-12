@@ -57,12 +57,10 @@ void UFootstepAnimNotify::PlayFootstepSound(AActor* OwnerActor)
 	
 	bool bHit = World->LineTraceSingleByChannel(GroundHit, StartLoc, EndLoc, ECollisionChannel::ECC_Visibility, CollisionParams);
     
-	DrawDebugLine(World, StartLoc, EndLoc, bHit ? FColor::Red : FColor::Blue, false, 5.0f);
-    
 	if (bHit && GroundHit.bBlockingHit)
 	{
 		UPhysicalMaterial* Material = GroundHit.PhysMaterial.Get();
-            
+           
 		if (Material && FootstepSounds.Contains(Material))
 		{
 			UGameplayStatics::PlaySoundAtLocation(World, FootstepSounds[Material], GroundHit.Location);

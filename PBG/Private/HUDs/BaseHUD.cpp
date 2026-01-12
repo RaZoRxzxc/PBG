@@ -8,29 +8,14 @@
 #include "Public/Characters/BaseCharacter.h"
 #include "Public/Widgets/PlayerWidget.h"
 
-void ABaseHUD::SetInteractText(FText text)
+void ABaseHUD::ShowInteractImage(bool bIsInteract)
 {
-	if (PlayerWidget && PlayerWidget->GetInteractText())
+	if (PlayerWidget)
 	{
-		PlayerWidget->GetInteractText()->SetText(text);
+		PlayerWidget->ShowInteractImage(bIsInteract);
 	}
 }
 
-void ABaseHUD::ShowInteractBlock()
-{
-	if (PlayerWidget && PlayerWidget->InteractBox)
-	{
-		PlayerWidget->InteractBox->SetVisibility(ESlateVisibility::Visible);
-	}
-}
-
-void ABaseHUD::HideInteractBlock()
-{
-	if (PlayerWidget && PlayerWidget->InteractBox)
-	{
-		PlayerWidget->InteractBox->SetVisibility(ESlateVisibility::Hidden);
-	}
-}
 
 void ABaseHUD::SetMicVolumeValue(float Value)
 {
