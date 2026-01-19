@@ -23,6 +23,8 @@ ABaseCharacter::ABaseCharacter()
 	AudioCaptureComponent->bEnableBusSends = false;
 	AudioCaptureComponent->bEnableBaseSubmix = false;
 	AudioCaptureComponent->bEnableSubmixSends = false;
+	
+	DeathVolume = 0.3f;
 }
 
 // Called when the game starts or when	spawned
@@ -57,9 +59,13 @@ void ABaseCharacter::AudioEnvelopeValue(float EnvelopeValue)
 		PlayerHUD->SetMicVolumeValue(MicVolume);
 	}
 	
-	if (MicVolume > 1.0f)
+	if (bIsEquip)
 	{
-		isDead();
+		if (MicVolume > DeathVolume)
+		{
+			isDead();
+		}
+		OnEquipCameraDelegate.Broadcast(bIsEquip);
 	}
 }
 
@@ -152,11 +158,11 @@ void ABaseCharacter::FixedTick()
 	{
 		MovementState = EMovementState::E_Idle;
 	}
-	else if (Speed <= 401.0f)
+	else if (Speed <= 251.0f)
 	{
 		MovementState = EMovementState::E_Walk;
 	}
-	else if (Speed <= 801.0f)
+	else if (Speed <= 501.0f)
 	{
 		MovementState = EMovementState::E_Sprint;
 	}

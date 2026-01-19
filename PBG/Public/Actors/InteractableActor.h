@@ -14,7 +14,7 @@ class PBG_API AInteractableActor : public AActor, public IInteractInterface
 	GENERATED_BODY()
 	
 public:	
-	void Interact_Implementation(ACharacter* Character) override;
+	void Interact_Implementation(ABaseCharacter* Character) override;
 	void UseItem_Implementation() override;
 	
 	// Sets default values for this actor's properties

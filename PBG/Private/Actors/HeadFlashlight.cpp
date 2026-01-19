@@ -3,6 +3,7 @@
 
 #include "Actors/HeadFlashlight.h"
 
+#include "Characters/BaseCharacter.h"
 #include "Components/SpotLightComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
@@ -14,14 +15,17 @@ AHeadFlashlight::AHeadFlashlight()
 	Light->SetupAttachment(Mesh);
 }
 
-void AHeadFlashlight::Interact_Implementation(ACharacter* Character)
+void AHeadFlashlight::Interact_Implementation(ABaseCharacter* Character)
 {
 	Super::Interact_Implementation(Character);
+	
 	if (Character)
 	{
+		bIsEquip = true;
+		Character->SetIsEquip(bIsEquip);
+		
 		AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("FlashLight_Socket"));
 		Collision->SetCollisionProfileName(TEXT("NoCollision"));
-		bIsEquip = true;
 	}
 }
 

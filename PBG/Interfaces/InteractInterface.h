@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "Characters/BaseCharacter.h"
 #include "InteractInterface.generated.h"
 
 // This class does not need to be modified.
@@ -24,7 +25,7 @@ class PBG_API IInteractInterface
 public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Interact(ACharacter* Character);
+	void Interact(ABaseCharacter* Character);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UseItem();

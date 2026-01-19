@@ -7,7 +7,6 @@ void AInteractableActor::UseItem_Implementation()
 {
 	IInteractInterface::UseItem_Implementation();
 	
-	
 }
 
 // Sets default values
@@ -22,7 +21,7 @@ AInteractableActor::AInteractableActor()
 	Collision->SetupAttachment(Mesh);
 }
 
-void AInteractableActor::Interact_Implementation(ACharacter* Character)
+void AInteractableActor::Interact_Implementation(ABaseCharacter* Character)
 {
 	IInteractInterface::Interact_Implementation(Character);
 	

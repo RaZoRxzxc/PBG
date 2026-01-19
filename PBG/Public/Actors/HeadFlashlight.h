@@ -15,7 +15,7 @@ class PBG_API AHeadFlashlight : public AInteractableActor
 	AHeadFlashlight();
 public:
 	
-	void Interact_Implementation(ACharacter* Character) override;
+	void Interact_Implementation(ABaseCharacter* Character) override;
 	void UseItem_Implementation() override;
 	
 protected:

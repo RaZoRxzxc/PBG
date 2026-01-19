@@ -29,6 +29,7 @@ enum class EStandState : uint8
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathRegistered);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateSprintMeter, float, Percentage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSprintStateChanged, bool, bSprinting);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEquipCameraChanged, bool, bEquip);
 UCLASS()
 class PBG_API ABaseCharacter : public ACharacter
 {
@@ -43,7 +44,7 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	EStandState StandState;
-	
+
 protected:
 	UPROPERTY()
 	class ABaseHUD* PlayerHUD;
@@ -53,6 +54,18 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
 	float MicVolume;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	float DeathVolume;
+	
+private:
+	bool bIsEquip = false;
+	
+public:
+	bool GetIsEquip() const { return bIsEquip; }
+	bool SetIsEquip(bool bIsEquipItem) { return bIsEquip = bIsEquipItem; }
+	
+protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* Camera;
@@ -144,13 +157,13 @@ protected:
 	FTimerHandle SprintTimer;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float WalkSpeed = 400.0f;
+	float WalkSpeed = 250.0f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float SprintSpeed = 800.0f;
+	float SprintSpeed = 500.0f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float CrouchSpeed = 200.0f;
+	float CrouchSpeed = 125.0f;
 public:
 	
 	/** Delegate called when the sprint meter should be updated */
@@ -160,6 +173,8 @@ public:
 	FSprintStateChanged OnSprintStateChanged;
 	
 	FOnDeathRegistered OnDeathRegistered;
+	
+	FEquipCameraChanged OnEquipCameraDelegate;
 	
 protected:
 	

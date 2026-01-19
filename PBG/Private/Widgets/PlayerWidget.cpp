@@ -10,6 +10,7 @@ void UPlayerWidget::SetupCharacter(ABaseCharacter* Character)
 {
 	Character->OnSprintStateChanged.AddDynamic(this, &UPlayerWidget::OnSprintStateChanged);
 	Character->OnSprintMeterUpdated.AddDynamic(this, &UPlayerWidget::OnSprintMeterUpdated);
+	Character->OnEquipCameraDelegate.AddDynamic(this, &UPlayerWidget::ShowMicBar);
 }
 
 void UPlayerWidget::OnSprintMeterUpdated(float Percent)
@@ -24,11 +25,21 @@ void UPlayerWidget::OnSprintStateChanged(bool bSprinting)
 {
 	if (bSprinting && StaminaAnim)
 	{
-		PlayAnimation(StaminaAnim, 0.0f, 0, EUMGSequencePlayMode::Forward, 1.0f, false);
+		PlayAnimation(ShowStamina);
+		
+		if (StaminaBar->GetVisibility() == ESlateVisibility::Collapsed)
+		{
+			PlayAnimation(StaminaAnim, 0.0f, 0, EUMGSequencePlayMode::Forward, 1.0f, false);
+		}
 	}
 	else
 	{
-		StopAnimation(StaminaAnim);
+		PlayAnimationReverse(ShowStamina);
+		
+		if (StaminaBar->GetVisibility() == ESlateVisibility::Visible)
+		{
+			StopAnimation(StaminaAnim);
+		}
 	}
 }
 
@@ -36,7 +47,6 @@ void UPlayerWidget::SetMicBarValue(float Value)
 {
 	if (MicVolumeBar)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Mic volume = %f"), Value)
 		MicVolumeBar->SetPercent(Value);
 	}
 }
@@ -53,5 +63,17 @@ void UPlayerWidget::ShowInteractImage(bool bIsInteracting)
 		{
 			InteractImage->SetVisibility(ESlateVisibility::Collapsed);
 		}
+	}
+}
+
+void UPlayerWidget::ShowMicBar(bool bIsEquip)
+{
+	if (bIsEquip)
+	{
+		MicVolumeBar->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		MicVolumeBar->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }

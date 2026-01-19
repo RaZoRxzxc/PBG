@@ -20,6 +20,7 @@ public:
 	/** Sets up delegate listeners for the passed character */
 	void SetupCharacter(ABaseCharacter* Character);
 
+protected:
 	/** Called when the character's sprint meter is updated */
 	UFUNCTION()
 	void OnSprintMeterUpdated(float Percent);
@@ -29,12 +30,14 @@ public:
 	void OnSprintStateChanged(bool bSprinting);
 	
 	UFUNCTION()
+	void ShowMicBar(bool bIsEquip);
+public:
+	UFUNCTION()
 	void SetMicBarValue(float Value);
 	
 	UFUNCTION()
 	void ShowInteractImage(bool bIsInteracting);
 
-protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (BindWidget))
 	UProgressBar* MicVolumeBar;
@@ -47,4 +50,7 @@ protected:
 	
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* StaminaAnim;
+	
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* ShowStamina;
 };
