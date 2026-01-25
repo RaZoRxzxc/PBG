@@ -127,6 +127,11 @@ private:
 	AActor* HoveredInteractActor;
 	
 	FTimerHandle InteractableItemNameTimer;
+	
+public:
+	
+	UPROPERTY()
+	AActor* EquippedItem = nullptr;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact")
 	float ShownInteractItemNameTime = 0.1f;

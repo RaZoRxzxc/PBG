@@ -12,7 +12,7 @@
 ABaseCharacter::ABaseCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(GetMesh(), FName("head"));
@@ -133,6 +133,12 @@ void ABaseCharacter::ToggleCrouch()
 
 void ABaseCharacter::UseItem()
 {
+	if (EquippedItem && EquippedItem->Implements<UInteractInterface>())
+	{
+		IInteractInterface::Execute_UseItem(EquippedItem);
+		return;
+	}
+	
 	if (InteractableActor && InteractableActor->Implements<UInteractInterface>())
 	{
 		IInteractInterface::Execute_UseItem(InteractableActor);
@@ -146,15 +152,15 @@ void ABaseCharacter::isDead()
 		bIsDead = true;
 		UE_LOG(LogTemp, Warning, TEXT("Player is dead"));
 		
-		// Enable mesh physics
-		GetMesh()->SetCollisionProfileName("Ragdoll");
-		GetMesh()->SetSimulatePhysics(true);
-		
+		// Disable input
 		if (APlayerController* PC = Cast<APlayerController>(GetController()))
 		{
 			DisableInput(PC);
 		}
 		
+		// Enable mesh physics
+		GetMesh()->SetCollisionProfileName("Ragdoll");
+		GetMesh()->SetSimulatePhysics(true);
 	}
 }
 

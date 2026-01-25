@@ -31,7 +31,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	UBoxComponent* Collision;
 	
-	bool bIsEquip = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundBase* PickUpSound;
 public:	
 	
 	// Called every frame

@@ -19,10 +19,12 @@ void AHeadFlashlight::Interact_Implementation(ABaseCharacter* Character)
 {
 	Super::Interact_Implementation(Character);
 	
-	if (Character)
+	if (Character && !bIsEquip)
 	{
 		bIsEquip = true;
 		Character->SetIsEquip(bIsEquip);
+		
+		Character->EquippedItem = this;
 		
 		AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("FlashLight_Socket"));
 		Collision->SetCollisionProfileName(TEXT("NoCollision"));

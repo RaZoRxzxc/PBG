@@ -5,6 +5,7 @@
 
 #include "Characters/BaseCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATrapActor::ATrapActor()
@@ -34,6 +35,9 @@ void ATrapActor::OnTrapOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	if (ABaseCharacter* Character = Cast<ABaseCharacter>(OtherActor))
 	{
 		Character->OnDeathRegistered.Broadcast();
+		
+		if (TrapSound)
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), TrapSound, GetActorLocation());
 	}
 }
 

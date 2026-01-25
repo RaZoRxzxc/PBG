@@ -3,11 +3,7 @@
 
 #include "Actors/InteractableActor.h"
 
-void AInteractableActor::UseItem_Implementation()
-{
-	IInteractInterface::UseItem_Implementation();
-	
-}
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AInteractableActor::AInteractableActor()
@@ -21,10 +17,20 @@ AInteractableActor::AInteractableActor()
 	Collision->SetupAttachment(Mesh);
 }
 
+void AInteractableActor::UseItem_Implementation()
+{
+	IInteractInterface::UseItem_Implementation();
+	
+}
+
 void AInteractableActor::Interact_Implementation(ABaseCharacter* Character)
 {
 	IInteractInterface::Interact_Implementation(Character);
 	
+	if (PickUpSound)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), PickUpSound);
+	}
 }
 
 // Called when the game starts or when spawned
