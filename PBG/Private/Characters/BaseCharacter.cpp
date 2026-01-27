@@ -27,6 +27,14 @@ ABaseCharacter::ABaseCharacter()
 	DeathVolume = 0.3f;
 }
 
+void ABaseCharacter::UpdateInputSensitivity()
+{
+	float MouseSensitivityMultiplier = 1.0f;
+    
+	if (IConsoleVariable* MouseCVar = IConsoleManager::Get().FindConsoleVariable(TEXT("input.MouseSensitivity")))
+		MouseSensitivityMultiplier = MouseCVar->GetFloat();
+}
+
 // Called when the game starts or when	spawned
 void ABaseCharacter::BeginPlay()
 {
@@ -84,10 +92,14 @@ void ABaseCharacter::Look(const FInputActionValue& Value)
 {
 	FVector2D LookDirection = Value.Get<FVector2D>();
 	
+	float SensitivityMultiplier = 1.0f;
+	if (IConsoleVariable* CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("input.MouseSensitivity")))
+		SensitivityMultiplier = CVar->GetFloat();
+	
 	if (GetController() != nullptr)
 	{
-		AddControllerYawInput(LookDirection.X);
-		AddControllerPitchInput(LookDirection.Y);
+		AddControllerYawInput(LookDirection.X * SensitivityMultiplier);
+		AddControllerPitchInput(LookDirection.Y * SensitivityMultiplier);
 	}
 }
 
@@ -153,7 +165,7 @@ void ABaseCharacter::isDead()
 		UE_LOG(LogTemp, Warning, TEXT("Player is dead"));
 		
 		// Disable input
-		if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
 		{
 			DisableInput(PC);
 		}

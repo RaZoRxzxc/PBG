@@ -20,7 +20,10 @@ public class PBG : ModuleRules
 			"UMG",
 			"Slate", 
 			"AudioCapture",
-			"PhysicsCore"
+			"PhysicsCore",
+			"NavigationSystem",
+			"SlateCore",
+			"Niagara"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });

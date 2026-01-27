@@ -66,6 +66,13 @@ public:
 	bool SetIsEquip(bool bIsEquipItem) { return bIsEquip = bIsEquipItem; }
 	
 protected:
+	// Base sensitivity values
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	float BaseMouseSensitivity = 1.0f;
+	
+public:
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	void UpdateInputSensitivity();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* Camera;
