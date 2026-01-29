@@ -56,6 +56,9 @@ void ABaseCharacter::BeginPlay()
 	AudioCaptureComponent->OnAudioEnvelopeValue.AddDynamic(this, &ABaseCharacter::AudioEnvelopeValue);
 	
 	OnDeathRegistered.AddDynamic(this, &ABaseCharacter::isDead);
+	
+	// Camera rec time 
+	StartCountUp();
 }
 
 void ABaseCharacter::AudioEnvelopeValue(float EnvelopeValue)
@@ -316,5 +319,19 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(UseItemAction, ETriggerEvent::Started, this, &ABaseCharacter::UseItem);
 	}
 
+}
+
+void ABaseCharacter::StartCountUp()
+{
+	FTimerHandle CountTimer;
+	GetWorldTimerManager().SetTimer(CountTimer, [this]
+	{
+		if (bIsEquip)
+		{
+			CountUp = CountUp += 0.01f;
+			OnCountTimeChangedDelegate.Broadcast(CountUp);
+			UE_LOG(LogTemp, Warning, TEXT("Current count: %f"), CountUp);
+		}	
+	}, 0.01f, true);
 }
 

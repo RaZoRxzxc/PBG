@@ -30,6 +30,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathRegistered);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateSprintMeter, float, Percentage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSprintStateChanged, bool, bSprinting);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEquipCameraChanged, bool, bEquip);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCountTimeChanged, float, CountTime);
 UCLASS()
 class PBG_API ABaseCharacter : public ACharacter
 {
@@ -188,6 +189,8 @@ public:
 	
 	FEquipCameraChanged OnEquipCameraDelegate;
 	
+	FCountTimeChanged OnCountTimeChangedDelegate;
+	
 protected:
 	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -197,4 +200,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	float GetCountUp() const { return CountUp; }
+protected:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Count")
+	float CountUp = 0.0f;
+	
+	void StartCountUp();
 };

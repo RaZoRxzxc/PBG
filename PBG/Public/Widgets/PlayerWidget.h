@@ -30,14 +30,16 @@ protected:
 	void OnSprintStateChanged(bool bSprinting);
 	
 	UFUNCTION()
-	void ShowMicBar(bool bIsEquip);
+	void ShowCameraBox(bool bIsEquip);
+	
+	UFUNCTION()
+	void SetCountUpText(float CountTime);
 public:
 	UFUNCTION()
 	void SetMicBarValue(float Value);
 	
 	UFUNCTION()
 	void ShowInteractImage(bool bIsInteracting);
-
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (BindWidget))
 	UProgressBar* MicVolumeBar;
@@ -47,6 +49,12 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (BindWidget))
 	class UImage* InteractImage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (BindWidget))
+	UTextBlock* CountText;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (BindWidget))
+	class UVerticalBox* CameraVerBox;
 	
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* StaminaAnim;

@@ -1,16 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Public/Widgets/PlayerWidget.h"
-
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
+#include "Components/VerticalBox.h"
+#include "Components/TextBlock.h"
 #include "Public/Characters/BaseCharacter.h"
 
 void UPlayerWidget::SetupCharacter(ABaseCharacter* Character)
 {
 	Character->OnSprintStateChanged.AddDynamic(this, &UPlayerWidget::OnSprintStateChanged);
 	Character->OnSprintMeterUpdated.AddDynamic(this, &UPlayerWidget::OnSprintMeterUpdated);
-	Character->OnEquipCameraDelegate.AddDynamic(this, &UPlayerWidget::ShowMicBar);
+	Character->OnEquipCameraDelegate.AddDynamic(this, &UPlayerWidget::ShowCameraBox);
+	Character->OnCountTimeChangedDelegate.AddDynamic(this, &UPlayerWidget::SetCountUpText);
 }
 
 void UPlayerWidget::OnSprintMeterUpdated(float Percent)
@@ -66,14 +68,25 @@ void UPlayerWidget::ShowInteractImage(bool bIsInteracting)
 	}
 }
 
-void UPlayerWidget::ShowMicBar(bool bIsEquip)
+void UPlayerWidget::ShowCameraBox(bool bIsEquip)
 {
 	if (bIsEquip)
 	{
-		MicVolumeBar->SetVisibility(ESlateVisibility::Visible);
+		CameraVerBox->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
 	{
-		MicVolumeBar->SetVisibility(ESlateVisibility::Collapsed);
+		CameraVerBox->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
+void UPlayerWidget::SetCountUpText(float CountTime)
+{
+	if (CountText && CountTime >= 0.0f)
+	{
+		FTimespan TimeSpan = FTimespan::FromSeconds(CountTime);
+		FString TimeString = FString::Printf(TEXT("%02d:%02d:%02d"), TimeSpan.GetHours(), TimeSpan.GetMinutes(), TimeSpan.GetSeconds());
+		
+		CountText->SetText(FText::FromString(TimeString));
 	}
 }
