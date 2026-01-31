@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "AudioCaptureComponent.h"
 #include "Interfaces/InteractInterface.h"
+#include "Widgets/PauseWidget.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -317,6 +318,9 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		// Interacting
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ABaseCharacter::Interact);
 		EnhancedInputComponent->BindAction(UseItemAction, ETriggerEvent::Started, this, &ABaseCharacter::UseItem);
+		
+		// Pause game
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &ABaseCharacter::PauseGame);
 	}
 
 }
@@ -333,5 +337,21 @@ void ABaseCharacter::StartCountUp()
 			UE_LOG(LogTemp, Warning, TEXT("Current count: %f"), CountUp);
 		}	
 	}, 0.01f, true);
+}
+
+void ABaseCharacter::PauseGame()
+{
+	if (PauseWidgetClass)
+	{
+		PauseWidget = CreateWidget<UPauseWidget>(GetWorld(), PauseWidgetClass);
+		if (PauseWidget)
+		{
+			if (!bIsGamePaused)
+			{
+				bIsGamePaused = true;
+				PauseWidget->AddToViewport();
+			}
+		}
+	}
 }
 

@@ -43,6 +43,7 @@ void UMenuWidget::OpenSettings()
 		
 		if (SettingsWidget)
 		{
+			this->RemoveFromParent();
 			SettingsWidget->AddToViewport();
 		}
 	}

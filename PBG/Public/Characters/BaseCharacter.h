@@ -96,6 +96,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* UseItemAction;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* PauseAction;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
@@ -207,4 +210,15 @@ protected:
 	float CountUp = 0.0f;
 	
 	void StartCountUp();
+	
+	bool bIsGamePaused = false;
+	
+	UFUNCTION()
+	void PauseGame();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PauseWidget")
+	class UPauseWidget* PauseWidget;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PauseWidget")
+	TSubclassOf<class UPauseWidget> PauseWidgetClass;
 };

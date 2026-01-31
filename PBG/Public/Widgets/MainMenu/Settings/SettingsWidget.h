@@ -13,6 +13,7 @@ class USettingsEntryWidget;
 class UButton;
 class UDefaultSaveGame;
 class USlider;
+class UMenuWidget;
 
 UCLASS()
 class PBG_API USettingsWidget : public UUserWidget
@@ -24,6 +25,15 @@ protected:
 
 	UFUNCTION()
 	void OnDisplaySettingsClicked();
+	
+	UFUNCTION()
+	void CloseSettings();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MainMenu)
+	UMenuWidget* MainMenu;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MainMenu)
+	TSubclassOf<UMenuWidget> MainMenuWidgetClass;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USettingsEntryWidget* SettingsEntryWidget;
@@ -51,6 +61,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UVerticalBox* InputSettingsVB;
+	
+	UPROPERTY(BlueprintReadWrite, Transient ,meta = (BindWidgetAnim))
+	UWidgetAnimation* OpenSettings;
 private:
 	
 	UPROPERTY(meta = (BindWidget))
@@ -61,6 +74,9 @@ private:
 	
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* SensitivityBox;
+	
+	UPROPERTY(meta = (BindWidget))
+	UButton* CloseButton;
 	
 	void RegisterCVars();
 	

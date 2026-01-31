@@ -6,6 +6,7 @@
 #include "Components/VerticalBox.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveGame/DefaultSaveGame.h"
+#include "Widgets/MainMenu/MenuWidget.h"
 
 void USettingsWidget::NativeConstruct()
 {
@@ -20,11 +21,36 @@ void USettingsWidget::NativeConstruct()
 	{
 		PC->bShowMouseCursor = true;
 	}
+	
+	CloseButton->OnClicked.AddDynamic(this, &USettingsWidget::CloseSettings);
 }
 
 void USettingsWidget::OnDisplaySettingsClicked()
 {
 	// Implement if needed for opening sub-menus
+}
+
+void USettingsWidget::CloseSettings()
+{
+	if (this->IsInViewport())
+	{
+		PlayAnimationReverse(OpenSettings);
+		RemoveFromParent();
+		
+		// FTimerHandle TimerHandle;
+		// GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]
+		// {
+		// 	
+		// 	if (MainMenuWidgetClass)
+		// 	{
+		// 		MainMenu = CreateWidget<UMenuWidget>(GetWorld(), MainMenuWidgetClass);
+		// 		if (MainMenu)
+		// 		{
+		// 			MainMenu->AddToViewport();
+		// 		}
+		// 	}
+		// }, 0.75f, false);
+	}
 }
 
 void USettingsWidget::RegisterCVars()
