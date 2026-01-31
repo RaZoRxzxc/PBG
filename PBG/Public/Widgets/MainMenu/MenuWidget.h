@@ -17,6 +17,9 @@ class PBG_API UMenuWidget : public UUserWidget
 	
 protected:
 	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "StartGame")
+	FName LevelName;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings")
 	USettingsWidget* SettingsWidget;
 	

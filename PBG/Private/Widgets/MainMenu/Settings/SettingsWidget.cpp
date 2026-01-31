@@ -15,6 +15,11 @@ void USettingsWidget::NativeConstruct()
 	LoadSettings(TEXT("AudioSettings"), true);
 	LoadSettings(TEXT("InputSettings"), false);
 	CreateSettingsWidgets();
+	
+	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+	{
+		PC->bShowMouseCursor = true;
+	}
 }
 
 void USettingsWidget::OnDisplaySettingsClicked()
@@ -188,7 +193,7 @@ void USettingsWidget::AddDisplayModeSetting()
 		USettingsEntryWidget* DisplayModeWidget = CreateWidget<USettingsEntryWidget>(this, SettingsEntryWidgetClass);
 		if (DisplayModeWidget)
 		{
-			DisplayModeWidget->InitializeSetting(FText::FromString("Display Mod"),
+			DisplayModeWidget->InitializeSetting(FText::FromString("Display Mode"),
 				ESettingWidgetType::DropDown, TEXT(""), EDisplaySettingType::DisplayMode);
 			VideoSettingsVB->AddChild(DisplayModeWidget);
 		}
