@@ -23,18 +23,6 @@ void UPauseWidget::NativeConstruct()
 	BackToMenuBtn->OnClicked.AddDynamic(this, &UPauseWidget::BackToMenu);
 }
 
-void UPauseWidget::NativeDestruct()
-{
-	Super::NativeDestruct();
-	
-	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-	{
-		PC->bShowMouseCursor = true;
-		PC->SetInputMode(FInputModeGameOnly());
-		
-		UGameplayStatics::SetGamePaused(GetWorld(), false);
-	}
-}
 
 void UPauseWidget::UnpauseGame()
 {
@@ -44,9 +32,10 @@ void UPauseWidget::UnpauseGame()
 		
 		UGameplayStatics::SetGamePaused(GetWorld(), false);
 		
-		PC->SetInputMode(FInputModeGameAndUI());
+		PC->SetInputMode(FInputModeGameOnly());
 		PC->bShowMouseCursor = false;
 		
+		OnPauseMenuClosed.Broadcast();
 	}
 }
 
@@ -64,5 +53,8 @@ void UPauseWidget::OpenSettings()
 
 void UPauseWidget::BackToMenu()
 {
+	UGameplayStatics::SetGamePaused(GetWorld(), false);
+	
 	UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenu"));
+	OnPauseMenuClosed.Broadcast();
 }

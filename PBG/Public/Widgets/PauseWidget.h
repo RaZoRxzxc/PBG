@@ -9,6 +9,7 @@
 class UButton;
 class USettingsWidget;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPauseMenuClosed);
 UCLASS()
 class PBG_API UPauseWidget : public UUserWidget
 {
@@ -18,10 +19,11 @@ public:
 	UFUNCTION()
 	void UnpauseGame();
 	
+	FOnPauseMenuClosed OnPauseMenuClosed;
+	
 protected:
 	
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
 	
 	UFUNCTION()
 	void OpenSettings();

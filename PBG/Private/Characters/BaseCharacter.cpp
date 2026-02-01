@@ -343,15 +343,27 @@ void ABaseCharacter::PauseGame()
 {
 	if (PauseWidgetClass)
 	{
-		PauseWidget = CreateWidget<UPauseWidget>(GetWorld(), PauseWidgetClass);
-		if (PauseWidget)
+		if (!PauseWidget || !PauseWidget->IsInViewport())
 		{
-			if (!bIsGamePaused)
+			PauseWidget = CreateWidget<UPauseWidget>(GetWorld(), PauseWidgetClass);
+            
+			if (PauseWidget)
 			{
-				bIsGamePaused = true;
-				PauseWidget->AddToViewport();
+				PauseWidget->OnPauseMenuClosed.AddDynamic(this, &ABaseCharacter::PauseWidgetClosed);
 			}
 		}
+        
+		if (PauseWidget && !bIsGamePaused)
+		{
+			bIsGamePaused = true;
+			PauseWidget->AddToViewport();
+		}
 	}
+}
+
+void ABaseCharacter::PauseMenuClosed()
+{
+	bIsGamePaused = false;
+	PauseWidget = nullptr;
 }
 

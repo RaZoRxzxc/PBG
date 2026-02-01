@@ -216,6 +216,9 @@ protected:
 	UFUNCTION()
 	void PauseGame();
 	
+	UFUNCTION()
+	void PauseWidgetClosed();
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PauseWidget")
 	class UPauseWidget* PauseWidget;
 	

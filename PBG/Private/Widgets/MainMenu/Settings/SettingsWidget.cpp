@@ -35,21 +35,28 @@ void USettingsWidget::CloseSettings()
 	if (this->IsInViewport())
 	{
 		PlayAnimationReverse(OpenSettings);
-		RemoveFromParent();
 		
-		// FTimerHandle TimerHandle;
-		// GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]
-		// {
-		// 	
-		// 	if (MainMenuWidgetClass)
-		// 	{
-		// 		MainMenu = CreateWidget<UMenuWidget>(GetWorld(), MainMenuWidgetClass);
-		// 		if (MainMenu)
-		// 		{
-		// 			MainMenu->AddToViewport();
-		// 		}
-		// 	}
-		// }, 0.75f, false);
+		if (UGameplayStatics::IsGamePaused(GetWorld()))
+		{
+			RemoveFromParent();
+		}
+		else
+		{
+			RemoveFromParent();
+			if (MainMenuWidgetClass)
+			{
+				MainMenu = CreateWidget<UMenuWidget>(GetWorld(), MainMenuWidgetClass);
+				if (MainMenu)
+				{
+					MainMenu->AddToViewport();
+				}
+			}
+		}
+		
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]
+		{
+		}, 0.75f, false);
 	}
 }
 
