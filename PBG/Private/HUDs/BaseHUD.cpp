@@ -29,6 +29,12 @@ void ABaseHUD::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+	{
+		PC->SetInputMode(FInputModeGameOnly());
+		PC->bShowMouseCursor = false;
+	}
+	
 	if (PlayerWidgetClass)
 	{
 		PlayerWidget = CreateWidget<UPlayerWidget>(GetWorld(), PlayerWidgetClass);

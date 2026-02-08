@@ -353,17 +353,15 @@ void ABaseCharacter::PauseGame()
 			}
 		}
         
-		if (PauseWidget && !bIsGamePaused)
+		if (PauseWidget)
 		{
-			bIsGamePaused = true;
 			PauseWidget->AddToViewport();
 		}
 	}
 }
 
-void ABaseCharacter::PauseMenuClosed()
+void ABaseCharacter::PauseWidgetClosed()
 {
-	bIsGamePaused = false;
 	PauseWidget = nullptr;
 }
 

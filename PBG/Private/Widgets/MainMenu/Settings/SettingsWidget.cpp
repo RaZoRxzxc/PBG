@@ -4,60 +4,53 @@
 #include "Widgets/MainMenu/Settings/SettingsEntryWidget.h"
 #include "Characters/BaseCharacter.h"
 #include "Components/VerticalBox.h"
+#include "HUDs/MainMenuHUD.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveGame/DefaultSaveGame.h"
-#include "Widgets/MainMenu/MenuWidget.h"
+
+void USettingsWidget::PlaySettingsAnim()
+{
+	if (OpenSettings)
+		PlayAnimation(OpenSettings);
+}
 
 void USettingsWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
-	RegisterCVars();
-	LoadSettings(TEXT("AudioSettings"), true);
-	LoadSettings(TEXT("InputSettings"), false);
-	CreateSettingsWidgets();
+
+	// Open settings animation
+	PlaySettingsAnim();
 	
 	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
 	{
 		PC->bShowMouseCursor = true;
 	}
 	
-	CloseButton->OnClicked.AddDynamic(this, &USettingsWidget::CloseSettings);
-}
+	MainMenuHUD = Cast<AMainMenuHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	
+	RegisterCVars();
+	LoadSettings(TEXT("AudioSettings"), true);
+	LoadSettings(TEXT("InputSettings"), false);
+	CreateSettingsWidgets();
 
-void USettingsWidget::OnDisplaySettingsClicked()
-{
-	// Implement if needed for opening sub-menus
+	if (CloseButton)
+	{
+		CloseButton->OnClicked.AddDynamic(this, &USettingsWidget::CloseSettings);
+	}
 }
 
 void USettingsWidget::CloseSettings()
 {
-	if (this->IsInViewport())
+	FTimerHandle TimerHandle;
+	if (MainMenuHUD)
 	{
-		PlayAnimationReverse(OpenSettings);
-		
-		if (UGameplayStatics::IsGamePaused(GetWorld()))
-		{
-			RemoveFromParent();
-		}
-		else
-		{
-			RemoveFromParent();
-			if (MainMenuWidgetClass)
-			{
-				MainMenu = CreateWidget<UMenuWidget>(GetWorld(), MainMenuWidgetClass);
-				if (MainMenu)
-				{
-					MainMenu->AddToViewport();
-				}
-			}
-		}
-		
-		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]
-		{
-		}, 0.75f, false);
+		MainMenuHUD->OpenMainMenu();
 	}
+	else
+	{
+		this->RemoveFromParent();
+	}
+	//PlayAnimationReverse(OpenSettings);
 }
 
 void USettingsWidget::RegisterCVars()
@@ -185,6 +178,7 @@ void USettingsWidget::OnSliderValueChanged(float Value, USoundClass* InSoundClas
 
 void USettingsWidget::CreateSettingsWidgets()
 {
+	
 	if (VideoSettingsVB)
 	{
 		// Display Settings

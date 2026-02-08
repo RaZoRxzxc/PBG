@@ -15,16 +15,16 @@ class PBG_API UMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	
+	void PlayMenuAnim();
+	
 protected:
+	
+	class AMainMenuHUD* HUD = nullptr;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "StartGame")
 	FName LevelName;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings")
-	USettingsWidget* SettingsWidget;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings")
-	TSubclassOf<USettingsWidget> SettingsWidgetClass;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UButton* PlayButton;
@@ -44,7 +44,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* QuitBtnText;
 	
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* OpenAnim;
+	
 	virtual void NativeConstruct() override;
+	virtual void NativeOnInitialized() override;
 	
 	UFUNCTION()
 	void PlayGame();
@@ -54,4 +58,7 @@ protected:
 	
 	UFUNCTION()
 	void QuitGame();
+	
+	UFUNCTION()
+	void OnSettingsClosedHandler();
 };

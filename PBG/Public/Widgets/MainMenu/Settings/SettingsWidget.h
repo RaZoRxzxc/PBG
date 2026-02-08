@@ -19,21 +19,17 @@ UCLASS()
 class PBG_API USettingsWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	void PlaySettingsAnim();
 	
 protected:
 	virtual void NativeConstruct() override;
-
-	UFUNCTION()
-	void OnDisplaySettingsClicked();
 	
 	UFUNCTION()
 	void CloseSettings();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MainMenu)
-	UMenuWidget* MainMenu;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MainMenu)
-	TSubclassOf<UMenuWidget> MainMenuWidgetClass;
+	class AMainMenuHUD* MainMenuHUD = nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USettingsEntryWidget* SettingsEntryWidget;
